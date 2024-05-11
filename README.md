@@ -3,6 +3,8 @@
 
 This repository is mostly intended for my own use, to share the code between my different projects. The environment system is a conversion and slight refactor of the blueprint system featured in the great course [One Course Solution for Dynamic Sky System](https://www.udemy.com/course/unreal-engine-5one-course-solution-for-sky-weather-system/) by Vince Petrelli on Udemy.
 
+Converting the system to C++ taught me many things about working with dynamic materials and Niagara effects in code.
+
 # Usage
 1. Remove all light and atmosphere things from the map.
 2. Drag the `EnvironmentController` into the map
