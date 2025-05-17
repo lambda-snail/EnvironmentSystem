@@ -19,5 +19,12 @@ public:
 	
 	UPROPERTY(EditAnywhere, Config, Category=Test)
 	FText TestText{};
-	
+
+	// Each tick, the simulated time will be advanced by this amount.
+	UPROPERTY(EditAnywhere, Config, Category=Environment)
+	FTimespan TickRate{};
+
+	// How many seconds should pass between each tick of date time updates
+	UPROPERTY(EditAnywhere, Config, Category=Environment, meta = (ClampMin=0, UIMin=0))
+	float RealWorldTickFrequency { 1.f };
 };

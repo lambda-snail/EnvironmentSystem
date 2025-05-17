@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "EnvironmentSystem.h"
+#include "EnvironmentSystemLogging.h"
 
 #define LOCTEXT_NAMESPACE "FEnvironmentSystemModule"
 
@@ -18,3 +19,5 @@ void FEnvironmentSystemModule::ShutdownModule()
 #undef LOCTEXT_NAMESPACE
 	
 IMPLEMENT_MODULE(FEnvironmentSystemModule, EnvironmentSystem)
+
+DEFINE_LOG_CATEGORY(EnvironmentSystem);
