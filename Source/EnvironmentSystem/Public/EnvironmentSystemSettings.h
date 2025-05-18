@@ -23,8 +23,13 @@ public:
 	// Each tick, the simulated time will be advanced by this amount.
 	UPROPERTY(EditAnywhere, Config, Category=Environment)
 	FTimespan TickRate{};
-
-	// How many seconds should pass between each tick of date time updates
+	
+	// How many seconds should pass between each update to the weather events queue
 	UPROPERTY(EditAnywhere, Config, Category=Environment, meta = (ClampMin=0, UIMin=0))
-	float RealWorldTickFrequency { 1.f };
+	float WeatherTickFrequency { 10.f };
+
+	// How many seconds should pass between each update to the time. This governs the day/night
+	// cycle and should be used in conjunction with TickRate to control how long a day lasts 
+	UPROPERTY(EditAnywhere, Config, Category=Environment, meta = (ClampMin=0, UIMin=0))
+	float TimeTickFrequency { 1.f };
 };

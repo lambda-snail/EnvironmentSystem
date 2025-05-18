@@ -20,4 +20,4 @@ void FEnvironmentSystemModule::ShutdownModule()
 	
 IMPLEMENT_MODULE(FEnvironmentSystemModule, EnvironmentSystem)
 
-DEFINE_LOG_CATEGORY(EnvironmentSystem);
+DEFINE_LOG_CATEGORY(LogEnvironmentSystem);

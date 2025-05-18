@@ -73,6 +73,22 @@ struct ENVIRONMENTSYSTEM_API FExponentialHeightfogSettings
 	float ExtinctionScale  { .5f };
 };
 
+UCLASS(Blueprintable)
+class ENVIRONMENTSYSTEM_API UWindDataAsset : public UPrimaryDataAsset
+{
+	GENERATED_BODY()
+
+public:
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override { return FPrimaryAssetId("AssetItems", GetFName()); }
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MinStrength { 0.f };
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MaxStrength { 7.f };
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float MedianStrength { 2.f };
+};
+
 // Determines the light and atmosphere parameters for a weather type.
 USTRUCT(Blueprintable)
 struct ENVIRONMENTSYSTEM_API FWeatherConfiguration
@@ -90,6 +106,9 @@ struct ENVIRONMENTSYSTEM_API FWeatherConfiguration
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FAtmosphereSettings AtmosphereSettings;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UWindDataAsset> WindSettings;
 };
 
 USTRUCT(Blueprintable)

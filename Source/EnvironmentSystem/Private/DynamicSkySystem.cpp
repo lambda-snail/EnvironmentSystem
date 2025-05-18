@@ -2,9 +2,11 @@
 
 #include "DynamicSkySystem.h"
 
+#include "EnvironmentSystemLogging.h"
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
 #include "WeatherDataAssetBase.h"
+#include "WorldTimeSubsystem.h"
 #include "Components/DirectionalLightComponent.h"
 #include "Components/SkyAtmosphereComponent.h"
 #include "Components/SkyLightComponent.h"
@@ -20,7 +22,9 @@
 
 ADynamicSkySystem::ADynamicSkySystem()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	// Tick is called by the environment subsystem or manually, not the engine
+	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bStartWithTickEnabled = false;
 
     Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	SetRootComponent(Root);
@@ -82,11 +86,30 @@ void ADynamicSkySystem::BeginPlay()
 
 	InitSubsystems();
 
+	if (UWorldTimeSubsystem* WorldTimeSystem = GetWorld()->GetSubsystem<UWorldTimeSubsystem>())
+	{
+		WorldTimeSystem->RegisterDynamicSkySystem(this);
+	}
+	else
+	{
+		UE_LOGFMT(LogEnvironmentSystem, Warning, "Unable to obtain a reference to the UWorldTimeSubsystem - day and night cycle will be disabled");
+	}
+	
 	// TODO: Stubs to test weather change blending
 	if(CurrentWeatherPreset->WeatherType == EWeatherTypes::Snowy || CurrentWeatherPreset->WeatherType == EWeatherTypes::Rainy)
 	{
 		StartWeatherAndAnimateTransition();
 	}
+}
+
+void ADynamicSkySystem::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (UWorldTimeSubsystem* WorldTimeSystem = GetWorld()->GetSubsystem<UWorldTimeSubsystem>())
+	{
+		WorldTimeSystem->UnregisterDynamicSkySystem(this);
+	}
+	
+	Super::EndPlay(EndPlayReason);
 }
 
 void ADynamicSkySystem::InitSubsystems()
@@ -186,10 +209,10 @@ void ADynamicSkySystem::SetRainStrength(float RainStrength) const
 	ParametersCollection->SetScalarParameterValue(ShowPuddlesCollectionParameterName, RainStrength);
 }
 
-void ADynamicSkySystem::SetIsSNowing(bool bIsSNowing) const
+void ADynamicSkySystem::SetIsSnowing(bool bIsSnowing) const
 {
 	UMaterialParameterCollectionInstance* ParametersCollection = GetWorld()->GetParameterCollectionInstance(WeatherMaterialParameterCollection);
-	ParametersCollection->SetScalarParameterValue(SnowStrengthParameterName, bIsSNowing);
+	ParametersCollection->SetScalarParameterValue(SnowStrengthParameterName, bIsSnowing);
 }
 
 // Temporary hack 
@@ -208,10 +231,15 @@ void ADynamicSkySystem::WeatherAnimationUpdate(float Update)
 	}
 }
 
-void ADynamicSkySystem::Tick(float DeltaTime)
+void ADynamicSkySystem::TickTimeOfDay(float const Time)
 {
-	Super::Tick(DeltaTime);
+	// TODO: Add weather change function that checks and sets everything about the weather
+	//HandleWeatherSettings();
+	//HandleCloudMode();
 
+	TimeOfDay = FMath::Clamp(Time, 0, Midnight); 
+	
+	HandleSunAndMoonRotation();
 }
 
 bool ADynamicSkySystem::IsDaytime() const

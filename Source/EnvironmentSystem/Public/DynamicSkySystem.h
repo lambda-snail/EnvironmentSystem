@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/TimelineComponent.h"
+#include "Misc/DateTime.h"
 #include "GameFramework/Actor.h"
 #include "DynamicSkySystem.generated.h"
 
@@ -54,7 +55,7 @@ public:
 	// Sets default values for this actor's properties
 	ADynamicSkySystem();
 
-	virtual void Tick(float DeltaTime) override;
+	void TickTimeOfDay(float Time);
 
 	inline bool IsDaytime() const;
 	inline bool IsNightTime() const;
@@ -63,13 +64,16 @@ public:
 	void StartWeatherAndAnimateTransition();
 
 	// Immediately go to a snowy landscape without intermediate  transition
-	void SetIsSNowing(bool bIsSNowing) const;
+	void SetIsSnowing(bool bIsSnowing) const;
 	
 	static constexpr float Midnight = 24.f;
+	static constexpr float MinutesPerHour = 60.f;
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	UPROPERTY()
 	TObjectPtr<USceneComponent> Root;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
